@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.harsh.testingapi.Constants
 import com.harsh.testingapi.DataClasses.DailyForecastResponse
 import com.harsh.testingapi.DataClasses.LocationSearchResponse
 import com.harsh.testingapi.R
@@ -111,21 +112,12 @@ class TodayFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         locationViewModel = ViewModelProvider(requireActivity()).get(LocationViewModel::class.java)
-        locationViewModel.latitude.observe(viewLifecycleOwner, { latitude ->
-            Log.d("Latitude", "Latitude changed: $latitude")
+        locationViewModel.map.observe(viewLifecycleOwner){ it ->
+            Log.d("Latitude", "Latitude changed: $it")
+                if(locationViewModel.hitApi.value == false)
+                    fetchWeatherData(it[Constants.latitude]?:0.0, it[Constants.longitude]?:0.0)
+        }
 
-            locationViewModel.longitude.value?.let { longitude ->
-                fetchWeatherData(latitude, longitude)
-            }
-        })
-        locationViewModel.longitude.observe(viewLifecycleOwner, { longitude ->
-
-            Log.d("Longitude", "Longitude changed: $longitude")
-
-            locationViewModel.latitude.value?.let { latitude ->
-               fetchWeatherData(latitude, longitude)
-            }
-        })
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
         val retrofit = Retrofit.Builder()
@@ -168,10 +160,6 @@ class TodayFragment : Fragment() {
 //            requestPermission()
 //        }
 //    }
-
-
-
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun fetchWeatherData(latitude: Double, longitude: Double) {

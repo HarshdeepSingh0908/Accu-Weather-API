@@ -63,7 +63,7 @@ class TabLayoutActivity : AppCompatActivity() {
     val titleList = listOf("Today", "Tomorrow", "5 Days")
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationSearchResponse: LocationSearchResponse
-
+    var fromSearchScreen = false
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,17 +85,10 @@ class TabLayoutActivity : AppCompatActivity() {
             .build()
         weatherApiService = retrofit.create(WeatherApiService::class.java)
 
-
-
-
         binding.getCityName.setOnClickListener {
-
             val intent = Intent(this@TabLayoutActivity, SearchCityActivity::class.java)
             startActivity(intent)
         }
-
-
-
 
         fragmentList.add(TodayFragment())
         fragmentList.add(TomorrowFragment())
@@ -113,25 +106,13 @@ class TabLayoutActivity : AppCompatActivity() {
             if(it.hasExtra("cityInfo")){
                 var cityInfo = it.getStringExtra("cityInfo")
                 autoSearchCity = Gson().fromJson(cityInfo, AutoSearchCity::class.java)
+                locationViewModel.hitApi.setValue(false)
                 sharedViewModel.setLocationKey(autoSearchCity.key)
             }else{
                 //location
             }
         }
     }
-
-    override fun onPostResume() {
-        super.onPostResume()
-        sharedViewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
-        sharedViewModel.locationKey.observe(this) { key ->
-            // Handle the selected city key here
-            Log.d("Got Key resume", "Got key resume: $key")
-            // Call method to update UI or perform any other action using the selected city key
-        }
-    }
-
-
-
 
     class TabAdapter(fa: FragmentActivity, private val fragmentList: List<Fragment>) :
         FragmentStateAdapter(fa) {
@@ -149,11 +130,8 @@ class TabLayoutActivity : AppCompatActivity() {
             LocationManager.NETWORK_PROVIDER)
     }
     private fun checkPermissions(): Boolean {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            return true
-        }
-        return false
+        return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getCurrentLocation() {
@@ -167,7 +145,6 @@ class TabLayoutActivity : AppCompatActivity() {
                         val location: Location? = task.result
                         if (location == null) {
                             Toast.makeText(this, "Null Received", Toast.LENGTH_SHORT).show()
-
                         } else {
                             Toast.makeText(this, "not null", Toast.LENGTH_SHORT).show()
                             handleLocation(location.latitude, location.longitude)

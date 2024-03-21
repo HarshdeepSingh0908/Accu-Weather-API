@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Testing API"
+rootProject.name = "Accu Weather API"
 include(":app")
  

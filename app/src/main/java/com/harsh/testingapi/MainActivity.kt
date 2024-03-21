@@ -51,10 +51,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-
 
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
