@@ -7,10 +7,12 @@ import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -25,10 +27,18 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.util.*
-lateinit var binding: ActivityMainBinding
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.math.roundToInt
+
+
 class MainActivity : AppCompatActivity() {
+    lateinit var binding: ActivityMainBinding
     private val BASE_URL = "https://dataservice.accuweather.com/"
-    private val API_KEY = "dlSjVWK2AiAFbwHgGr3pzlVGItFfloAL"
+    private val API_KEY = "X3b1pU0kl5OE3hlJ6KsmaZkHe9GuiIkm"
     private lateinit var weatherApiService: WeatherApiService
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -36,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var locationSearchResponse: LocationSearchResponse
     private  val TAG = "MainActivity"
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -52,11 +63,12 @@ class MainActivity : AppCompatActivity() {
 
         weatherApiService = retrofit.create(WeatherApiService::class.java)
 
-        handleLocation(31.0521, 76.1175)
-        fetchWeatherData(31.0521, 76.1175)
-        // getCurrentLocation()
+//        handleLocation(31.0521, 76.1175)
+//        fetchWeatherData(31.0521, 76.1175)
+         getCurrentLocation()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun getCurrentLocation() {
         if (checkPermissions()) {
             if (isLocationEnabled()) {
@@ -67,10 +79,10 @@ class MainActivity : AppCompatActivity() {
                             Toast.makeText(applicationContext, "Null Received", Toast.LENGTH_SHORT).show()
 
                         } else {
-
-                          //  handleLocation(location.latitude, location.longitude)
+                           // Toast.makeText(this, "latitude:${location.latitude},longitude:${location.longitude}", Toast.LENGTH_SHORT).show()
+                            handleLocation(location.latitude, location.longitude)
                           //  handleLocation(31.05, 76.11)
-                          //  fetchWeatherData(location.latitude, location.longitude)
+                            fetchWeatherData(location.latitude, location.longitude)
                           //  fetchWeatherData(31.05, 76.11)
                         }
                     }
@@ -101,6 +113,7 @@ class MainActivity : AppCompatActivity() {
                 if (cityName != null) {
 
                     Toast.makeText(applicationContext, "City name: $cityName", Toast.LENGTH_LONG).show()
+                    binding.getCityName.setText(cityName)
                 } else {
 
                     Toast.makeText(applicationContext, "City name not available", Toast.LENGTH_SHORT).show()
@@ -117,31 +130,61 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun fetchWeatherData(latitude: Double, longitude: Double) {
         val query = "$latitude,$longitude"
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                val locationResponse = weatherApiService.searchLocation(API_KEY, query)
+                val locationResponse = weatherApiService.searchLocation(API_KEY, query,true)
                 if (locationResponse.isSuccessful) {
                     locationSearchResponse = locationResponse.body()!!
                     val locationKey = locationSearchResponse.Key
+                    val locationname = locationSearchResponse.LocalizedName
+                    Log.e(TAG, " locationname ${locationname}")
+                    binding.getCityName.setText(locationname)
                     if (!locationKey.isNullOrBlank()) {
-                        val forecastResponse = weatherApiService.getDailyForecast(locationKey, API_KEY)
+                        val forecastResponse = weatherApiService.getDailyForecast(locationKey, API_KEY, true)
                         if (forecastResponse.isSuccessful) {
+                            Log.e(TAG, " forecastResponse ${forecastResponse.body()}")
                             dailyForecastResponse = forecastResponse.body()!!
-
+                            Log.e(TAG, " dailyForecast response ${dailyForecastResponse.headline}")
 
                             Log.d("WeatherFetch", "API Response: $dailyForecastResponse")
 
 
-                            val TemperatureMin = dailyForecastResponse.DailyForecasts.firstOrNull()?.Temperature?.Minimum?.Value
-                            val TemperatureMax = dailyForecastResponse.DailyForecasts.firstOrNull()?.Temperature?.Maximum?.Value
-                            val realFeelTemperatureMin = dailyForecastResponse.DailyForecasts.firstOrNull()?.RealFeelTemperature?.Minimum?.Value
-                            val realFeelTemperatureMax = dailyForecastResponse.DailyForecasts.firstOrNull()?.RealFeelTemperature?.Maximum?.Value
-                            val humidityMin = dailyForecastResponse.DailyForecasts.firstOrNull()?.Day?.RelativeHumidity?.Minimum
-                            val humidityMax = dailyForecastResponse.DailyForecasts.firstOrNull()?.Day?.RelativeHumidity?.Maximum
+                            val TemperatureMin = dailyForecastResponse.dailyForecasts?.firstOrNull()?.temperature?.minimum?.value
+                            Log.e(TAG," TemperatureMin $TemperatureMin")
+                            val TemperatureMax = dailyForecastResponse.dailyForecasts?.firstOrNull()?.temperature?.maximum?.value
+                            Log.e(TAG," TemperatureMin $TemperatureMax")
+                            val realFeelTempMax = dailyForecastResponse.dailyForecasts?.firstOrNull()?.realFeelTemperature?.maximum?.value?.toFloat()
+                            val realFeelTempMin = dailyForecastResponse.dailyForecasts?.firstOrNull()?.realFeelTemperature?.minimum?.value?.toFloat()
+                            Log.e(TAG," TemperatureMin ${dailyForecastResponse.dailyForecasts?.firstOrNull()?.realFeelTemperature}")
 
-                            Log.e(TAG, " dailyForecastResponse.DailyForecasts.firstOrNull() ${ dailyForecastResponse.DailyForecasts.firstOrNull()}")
+                            val realFeelTemperatureMin = dailyForecastResponse.dailyForecasts?.firstOrNull()?.realFeelTemperature?.minimum?.value
+                            val realFeelTemperatureMax = dailyForecastResponse.dailyForecasts?.firstOrNull()?.realFeelTemperature?.maximum?.value
+                            val humidityMin = dailyForecastResponse.dailyForecasts?.firstOrNull()?.day?.relativeHumidity?.minimum
+                            val humidityMax = dailyForecastResponse.dailyForecasts?.firstOrNull()?.day?.relativeHumidity?.maximum
+                            val headline = dailyForecastResponse.dailyForecasts?.firstOrNull()?.day?.iconPhrase
+                            val sunrise = dailyForecastResponse.dailyForecasts?.firstOrNull()?.sun?.rise.toString()
+                            val convertedSunrise = convertToCurrentLocalTime(sunrise)
+                            val sunset = dailyForecastResponse.dailyForecasts?.firstOrNull()?.sun?.set.toString()
+                            val convertedSunset = convertToCurrentLocalTime(sunset)
+                            val date = dailyForecastResponse.headline?.effectiveDate
+                            val datee = convertToCurrentLocalTime2(date.toString())
+                            val temperature = TemperatureMax?.toFloat()
+                                ?.let { fahrenheitToCelsius(it) }
+
+                            //setting data on views
+                            val feelsLikeCelcius = realFeelTempMin?.let { fahrenheitToCelsius(it).roundToInt() }
+                            binding.tvFeelsLike.text = "Feels Like "+feelsLikeCelcius.toString()+"°C"
+                            binding.tvHumidity.text = humidityMax.toString()
+                            binding.tvSunrise.text = convertedSunrise
+                            binding.tvSunset.text = convertedSunset
+                            binding.tvTempFaranhite.text = TemperatureMax.toString()
+                            binding.tvWeatherType.text = headline.toString()
+                            binding.tvDateAndTime.text = "Date:"+datee
+                            binding.tvTemp.text = temperature?.roundToInt().toString()+"°C"
+//                            Log.e(TAG, " dailyForecastResponse.DailyForecasts.firstOrNull() ${ dailyForecastResponse.DailyForecasts.firstOrNull()}")
                             Log.d("WeatherFetch", "Minimum Real Feel Temperature: ${realFeelTemperatureMin ?: "N/A"}")
                             Log.d("WeatherFetch", "Maximum Real Feel Temperature: ${realFeelTemperatureMax ?: "N/A"}")
                             Log.d("WeatherFetch", "Minimum Humidity: ${humidityMin ?: "N/A"}")
@@ -195,6 +238,7 @@ class MainActivity : AppCompatActivity() {
                 ) == PackageManager.PERMISSION_GRANTED
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -214,4 +258,42 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val PERMISSION_REQUEST_ACCESS_LOCATION = 100
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun convertToCurrentLocalTime(givenTime: String): String {
+        // Parse the given time string
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")
+        val dateTime = LocalDateTime.parse(givenTime, formatter)
+
+        // Convert to ZonedDateTime with the given timezone
+        val givenZone = ZoneId.ofOffset("UTC", ZoneOffset.ofHoursMinutes(5, 30))
+        val zonedDateTime = ZonedDateTime.of(dateTime, givenZone)
+
+        // Convert to current local time
+        val localZone = ZoneId.systemDefault()
+        val localDateTime = zonedDateTime.withZoneSameInstant(localZone).toLocalDateTime()
+
+        // Format the local time
+        return localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+    }@RequiresApi(Build.VERSION_CODES.O)
+    fun convertToCurrentLocalTime2(givenTime: String): String {
+        // Parse the given time string
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")
+        val dateTime = LocalDateTime.parse(givenTime, formatter)
+
+        // Convert to ZonedDateTime with the given timezone
+        val givenZone = ZoneId.ofOffset("UTC", ZoneOffset.ofHoursMinutes(5, 30))
+        val zonedDateTime = ZonedDateTime.of(dateTime, givenZone)
+
+        // Convert to current local time
+        val localZone = ZoneId.systemDefault()
+        val localDateTime = zonedDateTime.withZoneSameInstant(localZone).toLocalDateTime()
+
+        // Format the local time
+        return localDateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+    }
+    fun fahrenheitToCelsius(fahrenheit: Float): Float {
+        return (fahrenheit - 32) * 5 / 9
+    }
+
 }

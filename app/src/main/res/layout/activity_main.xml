@@ -94,6 +94,7 @@
                     </TextView>
 
                     <LinearLayout
+                        android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/padding_large"
@@ -137,12 +138,13 @@
                             android:id="@+id/tv_temp"
                             android:fontFamily="@font/sans_medium"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/text_super_large"
+                            android:textSize="50sp"
                             android:text="@string/main_temp">
 
                         </TextView>
 
                         <ImageView
+
                             android:layout_width="100dp"
                             android:layout_height="100dp"
                             android:layout_marginTop="@dimen/padding_large"
@@ -161,7 +163,7 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_weight="1"
+                            android:layout_weight="1.5"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:id="@+id/tv_feels_like"
@@ -173,7 +175,7 @@
                         </TextView>
 
                         <TextView
-                            android:layout_weight="3"
+                            android:layout_weight="1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:id="@+id/tv_weather_type"
@@ -212,6 +214,7 @@
 
 
                     <LinearLayout
+                        android:visibility="gone"
                         android:id="@+id/ll_main_bg_above"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -227,6 +230,7 @@
                             android:id="@+id/rl_pressure_wrapper">
 
                             <LinearLayout
+
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"
@@ -442,6 +446,7 @@
                             android:id="@+id/rl_sunset_wrapper">
 
                             <LinearLayout
+                                android:id="@+id/llSunset"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"

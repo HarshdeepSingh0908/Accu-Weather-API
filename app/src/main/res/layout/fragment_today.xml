@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+     android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.TodayFragment">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_h_30"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".3" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_h_10"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_v_60"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".6" />
+
+    <TextView
+        android:id="@+id/tv_date_and_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:fontFamily="@font/sans_medium"
+        android:text="@string/demo_date"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_highest_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:fontFamily="@font/sans_medium"
+        android:text="Day 9° ↑"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_date_and_time" />
+
+    <TextView
+        android:id="@+id/tv_lowest_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:fontFamily="@font/sans_medium"
+        android:text="Night 1° ↓"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_large"
+        app:layout_constraintStart_toEndOf="@id/tv_highest_temp"
+        app:layout_constraintTop_toBottomOf="@id/tv_date_and_time" />
+
+    <LinearLayout
+        android:id="@+id/ll_temp_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_lowest_temp">
+
+        <TextView
+            android:id="@+id/tv_main_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:text="4"
+            android:textSize="100sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:text="°C"
+            android:textSize="50sp" />
+
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/iv_weather_phrase"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:src="@drawable/clear_icon"
+        app:layout_constraintBottom_toTopOf="@id/guideline_h_30"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline_v_60"
+        app:layout_constraintTop_toTopOf="@id/guideline_h_10" />
+
+    <TextView
+        android:id="@+id/tv_phrase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Sunny"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@id/iv_weather_phrase"
+        app:layout_constraintStart_toStartOf="@id/iv_weather_phrase"
+        app:layout_constraintTop_toBottomOf="@id/iv_weather_phrase" />
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:id="@+id/ll_first"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_phrase">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/humidity" />
+
+            <TextView
+                android:id="@+id/tv_humidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Humidity: 80%"
+                android:gravity="center"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/iv_sunrise"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/sunrise" />
+
+            <TextView
+                android:id="@+id/tv_sunrise_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sunrise:\n6:00 AM"
+                android:gravity="center"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/iv_sunset"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/sunset" />
+
+            <TextView
+                android:id="@+id/tv_sunset_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Sunset:\n 8:00 PM"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+
+        <!--
+        <TextView
+            android:id="@+id/tv_air_quality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Air Quality : Good" />
+        <TextView
+            android:id="@+id/tv_uv_index"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UV Index: 7, High" />
+        <TextView
+            android:id="@+id/tv_wind_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wind Spees: 5.8 mi/h" />
+            -->
+
+    </LinearLayout> <LinearLayout
+        android:layout_marginTop="10dp"
+        android:id="@+id/ll_second"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_first">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_margin="5dp"
+            android:padding="5dp">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/wind_speed" />
+
+            <TextView
+                android:gravity="center"
+                android:id="@+id/tv_windspeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Windspeed: \n80 km/h"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_uvindex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_margin="5dp"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/_ivuv_index"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/uv_index" />
+
+            <TextView
+                android:id="@+id/tv_UV_index"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UV Index: 9"
+                android:gravity="center"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_airquality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_margin="5dp"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/iv_air_quality"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/air_quality" />
+
+            <TextView
+                android:id="@+id/tv_air_quality"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Air Quality: 9"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+
+        <!--
+        <TextView
+            android:id="@+id/tv_air_quality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Air Quality : Good" />
+        <TextView
+            android:id="@+id/tv_uv_index"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UV Index: 7, High" />
+        <TextView
+            android:id="@+id/tv_wind_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wind Spees: 5.8 mi/h" />
+            -->
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/ll_first"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="10dp"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/iv_day_light"
+                />
+            <TextView
+                android:id="@+id/tv_hours_of_sun"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sunlight: 8 Hours"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
